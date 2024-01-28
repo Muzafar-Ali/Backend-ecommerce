@@ -33,8 +33,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'phone is required']
   },
-  profliePic: {
-    type: String,
+  profilePic: {
+      public_id: {
+          type: String,
+      },
+      url: {
+          type: String,
+      }
   }
   
     

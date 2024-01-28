@@ -1,11 +1,13 @@
 //create user controllers registerUser, loginUser, getMe
 import { User } from "../models/userModel.js";
+import getDataUri from "../utils/features.js";
+import cloudinary from "cloudinary";
 
 // REGISTER CONTROLLER
 export const registerController = async (req,res) => {
     try {
 
-        const { name, email, password, address, city, country, phone, profliePic } = req.body;
+        const { name, email, password, address, city, country, phone, profilePic } = req.body;
 
         if (!name || !email || !password || !address || !city || !country || !phone) {
             return res.status(400).json({
@@ -31,7 +33,7 @@ export const registerController = async (req,res) => {
             city, 
             country, 
             phone, 
-            profliePic
+            profilePic
           });
 
           if (user) {
@@ -162,7 +164,7 @@ export const updateUserProfileController = async (req, res) => {
       const { name, email, address, city, country, phone } = req.body;
       console.log(req.body);
 
-    //   if(req.file) user.profliePic = req.file.filename;
+    //   if(req.file) user.profilePic = req.file.filename;
       
       if(name) user.name = name;
       if(email) user.email = email;
@@ -216,7 +218,7 @@ export const updatePasswordController = async (req, res) => {
             message: 'Invalid old password' 
         });
       }
-        // save new password
+    // save new password
       user.password = newPassword;
       await user.save();
   
@@ -231,3 +233,31 @@ export const updatePasswordController = async (req, res) => {
       });
     }
 }
+
+// UPDATE PROFILE PIC 
+export const updateProfilePicController = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        const file = getDataUri(req.file);
+        //delete previous profile pic
+        if(user.profilePic.public_id) {
+            await cloudinary.v2.uploader.destroy(user.profilePic.public_id);
+        }
+        const cloudinaryDataBase = await cloudinary.v2.uploader.upload(file.content)
+        user.profilePic = {
+            public_id: cloudinaryDataBase.public_id,
+            url: cloudinaryDataBase.secure_url
+        }
+        await user.save();
+        return res.status(200).json({
+            success: true,
+            message: "Profile pic updated successfully",
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: `Error in update profile pic API: ${error.message}`
+        })
+    }
+} 
