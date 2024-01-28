@@ -56,12 +56,12 @@ export const getSingleProduct = async (req, res) => {
 export const createProduct = async (req, res) => {
     try {
         const { name, price, description, category, stock } = req.body;
-        // if(!name || !price || !description || !category || !stock){
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "Please provide all the details",
-        //     });
-        // }
+        if(!name || !price || !description || !category || !stock){
+            return res.status(400).json({
+                success: false,
+                message: "Please provide all the details",
+            });
+        }
 
         if(!req.file){
             return res.status(400).json({

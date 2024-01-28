@@ -13,14 +13,10 @@ import {
 
 const router = express.Router();
 
+router.route('/:id').get(getSingleProduct).put(isAuth, updateProduct).delete(isAuth, deleteProduct)
+router.route('/image/:id').put(isAuth, singleUpload, updateProductImage).delete(isAuth, deleteProductImage)
 router.get('/all-products', getAllProducts)
-router.get('/:id', getSingleProduct)
 router.post('/create', isAuth, singleUpload, createProduct)
-router.put('/:id', isAuth, updateProduct)
-router.put('/image/:id', isAuth, singleUpload, updateProductImage)
-router.put('/image/:id', isAuth, singleUpload, updateProductImage)
-router.delete('/image-delete/:id', isAuth, deleteProductImage)
-router.delete('/:id', isAuth, deleteProduct)
 
 
 export default router;
