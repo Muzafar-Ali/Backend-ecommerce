@@ -35,9 +35,9 @@ app.use(cookieParser())
 import userRoutes from "./routes/userRoutes.js";
 app.use("/api/v1/user", userRoutes);
 
-app.get('/', (req, res) => {
-    return res.status(200).send('Hello World!');
-})
+import productRoutes from "./routes/productsRoutes.js";
+app.use("/api/v1/product", productRoutes);
+
 
 const port = process.env.PORT || 8080
 

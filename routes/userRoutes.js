@@ -1,5 +1,6 @@
 import express from 'express';
-const router = express.Router();
+import { isAuth } from '../middlewares/authMiddleware.js';
+import { singleUpload } from '../middlewares/multerMiddleware.js';
 import { 
     loginController, 
     logoutController, 
@@ -9,10 +10,10 @@ import {
     updateUserProfileController, 
     userProfileController 
 } from '../controllers/userControllers.js';
-import { isAuth } from '../middlewares/authMiddleware.js';
-import { singleUpload } from '../middlewares/multerMiddleware.js';
 
-router.post('/register', registerController);
+const router = express.Router();
+
+router.post('/register', registerController)
 router.post('/login', loginController);
 router.get('/profile', isAuth, userProfileController);
 router.get('/logout', isAuth, logoutController);
