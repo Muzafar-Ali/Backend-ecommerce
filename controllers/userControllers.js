@@ -186,3 +186,48 @@ export const updateUserProfileController = async (req, res) => {
       });
     }
 }
+
+// UPDATE PASSWORD 
+export const updatePasswordController = async (req, res) => {
+    try {
+      const user = await User.findById(req.user._id).select('+password');
+  
+      if (!user) {
+        return res.status(404).json({ 
+            success: false,
+            message: 'User not found' 
+        });
+      }
+  
+      const { oldPassword, newPassword } = req.body;
+  
+      if (!oldPassword || !newPassword) {
+        return res.status(400).json({ 
+            success: false,
+            message: 'Please enter old and new passwords' 
+        });
+      }
+  
+      const isMatch = await user.comparePassword(oldPassword);
+  
+      if (!isMatch) {
+        return res.status(400).json({ 
+            success: false,
+            message: 'Invalid old password' 
+        });
+      }
+        // save new password
+      user.password = newPassword;
+      await user.save();
+  
+      return res.status(200).json({
+        success: true,
+        message: 'Password updated successfully',
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: `Error in update password API: ${error.message}`,
+      });
+    }
+}
