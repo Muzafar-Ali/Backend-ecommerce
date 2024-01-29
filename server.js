@@ -4,14 +4,18 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cloudinary from "cloudinary";
+import Stripe from "stripe";
+
 import connectDB from "./config/db.js";
 
 //dotenv config
 dotenv.config();
 
-
 //databse connection
 connectDB();
+
+//Stripe config
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 //cloudinary config
 cloudinary.v2.config({
@@ -40,6 +44,9 @@ app.use("/api/v1/product", productRoutes);
 
 import categoryRoutes from "./routes/categoryRoutes.js";
 app.use("/api/v1/cat", categoryRoutes);
+
+import orderRoutes from "./routes/orderRoutes.js";
+app.use("/api/v1/order", orderRoutes);
 
 
 const port = process.env.PORT || 8080

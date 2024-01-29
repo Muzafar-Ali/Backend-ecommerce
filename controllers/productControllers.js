@@ -1,4 +1,5 @@
-import { Product } from "../models/productModel.js";
+import Product  from "../models/productModel.js";
+import  Category  from "../models/categoryModel.js";
 import getDataUri from "../utils/features.js";
 import cloudinary from "cloudinary";
 
@@ -64,6 +65,17 @@ export const createProduct = async (req, res) => {
             });
         }
 
+        // Fetch the category ObjectId based on the provided category name
+        const categoryObject = await Category.findOne({ name: category });
+
+        if (!categoryObject) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid category",
+            });
+        }
+        
+
         if(!req.file){
             return res.status(400).json({
                 success: false,
@@ -79,7 +91,12 @@ export const createProduct = async (req, res) => {
         }
 
         await Product.create({
-            name, price, description, category, stock, images:[image]
+            name, 
+            price, 
+            description, 
+            category: categoryObject._id, 
+            stock, 
+            images: [image]
         })
 
         res.status(201).json({

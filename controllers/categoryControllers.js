@@ -1,5 +1,5 @@
 import Category from '../models/categoryModel.js';
-import { Product } from '../models/productModel.js';
+import Product  from '../models/productModel.js';
 
 //GET ALL CATEGORIES
 export const getAllCategories = async (req, res) => {
@@ -132,3 +132,4 @@ export const deleteCategory = async (req, res) => {
         });
     }
 }
+
