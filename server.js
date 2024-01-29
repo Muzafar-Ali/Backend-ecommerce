@@ -35,8 +35,11 @@ app.use(cookieParser())
 import userRoutes from "./routes/userRoutes.js";
 app.use("/api/v1/user", userRoutes);
 
-import productRoutes from "./routes/productsRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 app.use("/api/v1/product", productRoutes);
+
+import categoryRoutes from "./routes/categoryRoutes.js";
+app.use("/api/v1/cat", categoryRoutes);
 
 
 const port = process.env.PORT || 8080

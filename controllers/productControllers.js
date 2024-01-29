@@ -3,6 +3,7 @@ import getDataUri from "../utils/features.js";
 import cloudinary from "cloudinary";
 
 
+// GET ALL PRODUCTS
 export const getAllProducts = async (req, res) => {
     try {
         const products = await Product.find({});
