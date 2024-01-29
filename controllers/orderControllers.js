@@ -143,5 +143,94 @@ export const paymentController = async (req, res) => {
   res.status(200).json({
     success: true,
     clientSecret: paymentIntent.client_secret,
+    id: paymentIntent.id,
   });
+}
+
+
+// ***************** ADMIN SECTION *************** //
+
+//GET ALL ORDERS
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({});
+    if(!orders){
+        return res.status(404).json({
+            success: false,
+            message: "No orders found"
+        });
+    }
+
+    res.status(200).json({
+      success: true,
+      total_orders: orders.length,
+        orders
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `Error in get all orders API ${error.message}`  
+    });
+  }
+}
+
+//CHANGE ORDER STATUS
+export const changeOrderStatus = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    const { status } = req.body;
+    if(!status){
+      return res.status(400).json({
+        success: false,
+        message: "Please provide status"
+      });
+    }
+
+    if(!order){
+      return res.status(404).json({
+        success: false,
+        message: "No order found"
+      });
+    }
+
+    if(order.orderStatus === status){
+      return res.status(400).json({
+        success: false,
+        message: `Order status already updated with ${status} status`
+      });
+    }
+
+    if(order.orderStatus === "delivered"){
+      return res.status(400).json({
+        success: false,
+        message: "Order already delivered"
+      });
+    }
+
+    if(status === "delivered"){
+      order.deliveredAt = Date.now();
+    }
+    if(status === "shipped"){
+      order.shippedAt = Date.now();
+    }
+
+    order.orderStatus = status;
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Order status updated successfully"
+    });
+  } catch (error) {
+    if(error.name === "CastError"){
+      return res.status(404).json({
+        success: false,
+        message: "Invalid order id",
+      });
+    }
+    res.status(500).json({
+      success: false,
+      message: `Error in change order status API ${error.message}`  
+    });
+  }
 }

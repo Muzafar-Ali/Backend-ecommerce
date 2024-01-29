@@ -40,6 +40,18 @@ const userSchema = new mongoose.Schema({
       url: {
           type: String,
       }
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  // isBlocked: {
+  //   type: Boolean,
+  //   default: false,
+  // },
+  role: {
+    type: String,
+    default: "user"
   }
   
     

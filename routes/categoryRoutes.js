@@ -1,5 +1,5 @@
 import express from 'express';
-import { isAuth } from '../middlewares/authMiddleware.js';
+import { isAdmin, isAuth } from '../middlewares/authMiddleware.js';
 import { 
     createCategory, 
     deleteCategory, 
@@ -9,9 +9,8 @@ import {
 
 const router = express.Router();
 
-router.get('/all-cat', getAllCategories)
-router.post('/create', createCategory)
-router.put('/:id', isAuth, updateCategory)
-router.delete('/:id',isAuth ,deleteCategory)
+router.get('/all-cat', getAllCategories);
+router.post('/create', isAuth, isAdmin, createCategory);
+router.route('/:id').put(isAuth, isAdmin, updateCategory).delete(isAuth, isAdmin, deleteCategory);
 
 export default router;

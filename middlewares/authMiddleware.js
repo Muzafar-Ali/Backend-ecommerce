@@ -1,6 +1,7 @@
 import JWT from 'jsonwebtoken';
 import { User } from '../models/userModel.js';
 
+//USER AUTHENTICATION MIDDLEWARE
 export const isAuth = async (req, res, next) => {
     try {
 
@@ -15,6 +16,21 @@ export const isAuth = async (req, res, next) => {
         req.user = await User.findById(decodeUserId._id);
         next();
 
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
+
+//ADMIN AUTHENTICATION MIDDLEWARE
+export const isAdmin = async (req, res, next) => {
+    try {
+        if (req.user.role !== 'admin') {
+            return res.status(401).json({
+                success: false,
+                message: "Admin only."
+            });
+        }
+        next();
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
