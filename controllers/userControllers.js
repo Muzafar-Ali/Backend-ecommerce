@@ -1,6 +1,6 @@
 //create user controllers registerUser, loginUser, getMe
 import { User } from "../models/userModel.js";
-import getDataUri from "../utils/features.js";
+import getDataUri, { generateResetToken, sendResetEmail } from "../utils/features.js";
 import cloudinary from "cloudinary";
 import JWT from "jsonwebtoken";
 
@@ -263,71 +263,71 @@ export const updateProfilePicController = async (req, res) => {
     }
 } 
 
-// //FORGOT PASSWORD with sendgrid
-// export const forgotPasswordController = async (req, res) => {
-//     try {
-//         const { email } = req.body;
-//         const user = await User.findOne({ email });
-//         if(!user) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "User not found"
-//             })
-//         }
+//FORGOT PASSWORD
+export const forgotPasswordController = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+        if(!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            })
+        }
 
-//         // Generate and save reset token
-//         const resetToken = generateResetToken(user._id);
-//         user.resetToken = resetToken;
-//         user.resetTokenExpires = Date.now() + 3600000; // Token expires in 1 hour
-//         await user.save();
+        // Generate and save reset token
+        const resetToken = generateResetToken(user._id);
+        user.resetToken = resetToken;
+        user.resetTokenExpires = Date.now() + 3600000; // Token expires in 1 hour
+        await user.save();
 
-//         // Send reset password email
-//         await sendResetEmail(user.email, resetToken);
+        // Send reset password email
+        await sendResetEmail(user.email, resetToken);
         
-//         res.status(200).json({
-//             success: true,
-//             message: 'Reset email sent successfully'
-//         })
-//     } catch (error) {
-//         return res.status(500).json({
-//             success: false,
-//             message: `Error in forgot password API: ${error.message}`
-//         })
-//     }
-// }
+        res.status(200).json({
+            success: true,
+            message: 'Reset email sent successfully'
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: `Error in forgot password API: ${error.message}`
+        })
+    }
+}
 
-// //RESET PASSWORD with sendgrid
-// export const resetPasswordController = async (req, res) => {
-//     try {
-//         const { token, newPassword } = req.body;
-//         // Verify and decode the token
-//         const salt = await bcrypt.genSalt(10);
-//         const decodedToken = JWT.verify(token, salt);
-//         // Find user by decoded user ID
-//         const user = await User.findById(decodedToken.userId);
-//         // const user = await User.findOne({ resetToken: token, resetTokenExpires: { $gt: Date.now() } });
+//RESET PASSWORD with
+export const resetPasswordController = async (req, res) => {
+    try {
+        const { token, newPassword } = req.body;
+        // Verify and decode the token
+        const salt = await bcrypt.genSalt(10);
+        const decodedToken = JWT.verify(token, salt);
+        // Find user by decoded user ID
+        const user = await User.findById(decodedToken.userId);
+        // const user = await User.findOne({ resetToken: token, resetTokenExpires: { $gt: Date.now() } });
 
-//         if (!user || user.resetToken !== token || user.resetTokenExpires < Date.now()) {
-//             return res.status(400).json({ 
-//                 success: false,
-//                 message: 'Invalid or expired token' });
-//         }
+        if (!user || user.resetToken !== token || user.resetTokenExpires < Date.now()) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Invalid or expired token' });
+        }
 
-//         // Update user password
-//         user.password = newPassword;
-//         user.resetToken = undefined;
-//         user.resetTokenExpires = undefined;
-//         await user.save();
+        // Update user password
+        user.password = newPassword;
+        user.resetToken = undefined;
+        user.resetTokenExpires = undefined;
+        await user.save();
 
 
-//         res.status(200).json({
-//             success: true,
-//             message: 'Password reset successfully'
-//         })
-//     } catch (error) {
-//         return res.status(500).json({
-//             success: false,
-//             message: `Error in reset password API: ${error.message}`
-//         })
-//     }
-// }
+        res.status(200).json({
+            success: true,
+            message: 'Password reset successfully'
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: `Error in reset password API: ${error.message}`
+        })
+    }
+}
