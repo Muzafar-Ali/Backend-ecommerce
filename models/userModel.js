@@ -52,6 +52,13 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     default: "user"
+  },
+  resetToken: {
+    type: String,
+    default: ""
+  },
+  resetTokenExpires: {
+    type: Date,
   }
   
     
@@ -77,7 +84,7 @@ userSchema.pre('save', async function (next) {
   }
 });
 
-//decrypt the password before saving
+//decrypt the password 
 userSchema.methods.comparePassword = async function (enteredPassword) {
   try {
       return await bcrypt.compare(enteredPassword, this.password);

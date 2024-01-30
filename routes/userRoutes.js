@@ -21,4 +21,7 @@ router.put('/profile-update', isAuth, updateUserProfileController);
 router.put('/password-update', isAuth, updatePasswordController);
 router.put('/update-pic', isAuth, singleUpload, updateProfilePicController);
 
+// router.post('/forgot-password', forgotPasswordController);
+// router.post('/reset-password', isAuth, resetPasswordController);
+
 export default router;
