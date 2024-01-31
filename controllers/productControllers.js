@@ -288,3 +288,67 @@ export const deleteProduct = async (req, res) => {
         });
     }
 };
+
+
+//PRODUCT REVIEW AND COMMENT 
+
+export const productReview = async (req, res) => {
+    try {
+        const { rating, comment } = req.body;
+        const product = await Product.findById(req.params.id);
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found",
+            });
+        }
+        
+        //if already reviewed
+        const isReviewed = product.reviews.find((review) => review.user.toString() === req.user._id.toString());
+        if(isReviewed){
+            return res.status(400).json({
+                success: false,
+                message: "Product already reviewed",
+            })
+        }
+
+        // if (isReviewed) {
+        //     product.reviews.forEach((review) => {
+        //         if (review.user.toString() === req.user._id.toString()) {
+        //             review.rating = rating;
+        //             review.comment = comment;
+        //         }
+        //     });
+        // }
+
+        const review = {
+            user: req.user._id,
+            name: req.user.name,
+            rating: Number(rating),
+            comment,
+        };
+
+        product.reviews.push(review);
+        product.numReviews = product.reviews.length;
+        product.rating = product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
+
+        await product.save();
+
+        res.status(201).json({
+            success: true,
+            message: "Review added successfully",
+        });
+
+    } catch (error) {
+        if (error.name === "CastError") {
+            return res.status(404).json({
+                success: false,
+                message: "Invalid product id",
+            });
+        }
+        return res.status(500).json({
+            success: false,
+            message: `Error in adding review: ${error.message}`,
+        });
+    }
+}

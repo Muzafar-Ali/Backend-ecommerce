@@ -7,6 +7,7 @@ import {
     deleteProductImage,
     getAllProducts, 
     getSingleProduct, 
+    productReview, 
     updateProduct,
     updateProductImage
 } from '../controllers/productControllers.js';
@@ -17,6 +18,7 @@ router.get('/all-products', getAllProducts)
 router.route('/:id').get(getSingleProduct).put(isAuth, isAdmin, updateProduct).delete(isAuth, isAdmin, deleteProduct)
 router.route('/image/:id').put(isAuth, isAdmin, singleUpload, updateProductImage).delete(isAuth, isAdmin, deleteProductImage)
 router.post('/create', isAuth, isAdmin, singleUpload, createProduct)
+router.put('/:id/review', isAuth, productReview)
 
 
 export default router;

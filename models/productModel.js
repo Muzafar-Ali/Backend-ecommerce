@@ -1,5 +1,13 @@
 import mongoose from "mongoose";
 
+// REVIEW MODAL
+const reviewSchema = new mongoose.Schema({
+    name: { type: String, required: [true, 'name is required'] },
+    rating: { type: Number, default: 0 },
+    comment: { type: String, },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: [true, 'user is required'] }
+});
+
 const productSchema = mongoose.Schema({
     name: {
         type: String,
@@ -34,7 +42,17 @@ const productSchema = mongoose.Schema({
             public_id: String,
             url: String
         }
-    ]
+    ],
+    reviews: [reviewSchema],
+    rating: {
+        type: Number,
+        default: 0
+    },
+    numReviews: {
+        type: Number,
+        default: 0
+    }
+
 },{timestamps: true})
 
 const Product = mongoose.model('Products', productSchema);   
